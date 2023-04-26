@@ -31,20 +31,17 @@ public class WineController {
     }
 
     @PostMapping("/wine/")
-    public ResponseEntity<Wine> createWine(@Valid @RequestBody Wine wine) {
-        Wine createdWine = wineService.createWine(wine).getBody();
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdWine);
+    public ResponseEntity<WineResponseRest> save(@RequestBody Wine wine) {
+        return wineService.save(wine);
     }
 
     @PutMapping("/wine/{id}")
-    public ResponseEntity<Wine> updateWineById(@PathVariable Long id,@Valid @RequestBody Wine wine) {
-        Wine updatedWine = wineService.updateWineById(id, wine).getBody();
-        return updatedWine != null ? ResponseEntity.ok(updatedWine) : ResponseEntity.notFound().build();
+    public ResponseEntity<WineResponseRest> updateWineById(@PathVariable Long id,@RequestBody Wine wine) {
+        return wineService.updateWineById(id, wine);
     }
 
     @DeleteMapping("/wine/{id}")
     public ResponseEntity<WineResponseRest> deleteWineById(@PathVariable Long id) {
-        ResponseEntity<WineResponseRest> response = wineService.deleteWineById(id);
-        return response;
+        return wineService.deleteWineById(id);
     }
 }

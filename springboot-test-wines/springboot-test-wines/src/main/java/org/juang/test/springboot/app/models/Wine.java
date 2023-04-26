@@ -10,13 +10,13 @@ import javax.validation.constraints.Null;
 public class Wine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Null
+    @Null(message = "El id no debe ser enviado")
     private Long id;
-    @NotBlank
+    @NotBlank(message = "El nombre del vino tiene que ser enviado")
     private String name;
-    @NotBlank
+    @NotBlank(message = "El winery del vino tiene que ser enviado")
     private String winery;
-    @NotNull
+    @NotNull(message = "El año no puede ser null")
     private int año;
 
     // Constructor
