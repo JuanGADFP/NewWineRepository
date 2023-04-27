@@ -4,20 +4,18 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.util.List;
 
 @Entity
 @Table(name = "wines")
 public class Wine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Null(message = "El id no debe ser enviado")
     private Long id;
-    @NotBlank(message = "El nombre del vino tiene que ser enviado")
     private String name;
-    @NotBlank(message = "El winery del vino tiene que ser enviado")
     private String winery;
-    @NotNull(message = "El año no puede ser null")
     private int año;
+    private List<Owner> owners;
 
     // Constructor
     public Wine() {}
@@ -60,5 +58,14 @@ public class Wine {
 
     public void setAño(int año) {
         this.año = año;
+    }
+
+
+    public void setOwners(List<Owner> owners) {
+        this.owners = owners;
+    }
+
+    public List<Owner> getOwners() {
+        return owners;
     }
 }
