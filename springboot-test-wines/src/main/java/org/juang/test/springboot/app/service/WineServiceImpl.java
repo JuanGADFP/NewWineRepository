@@ -3,10 +3,7 @@ package org.juang.test.springboot.app.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.juang.test.springboot.app.models.Wine;
 import org.juang.test.springboot.app.repository.WineRepository;
 import org.juang.test.springboot.app.response.WineResponseRest;
@@ -15,20 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotEmpty;
-
 @Service
 public class WineServiceImpl implements WineService {
 
     @Autowired
     private WineRepository wineRepository;
 
-
-    public WineServiceImpl() {
-    }
-
+    @Override
     public ResponseEntity<List<Wine>> getAllWines() {
-        List<Wine> wines = wineRepository.findAllWithOwners();
+        List<Wine> wines = wineRepository.findAll();
         return new ResponseEntity<>(wines, HttpStatus.OK);
     }
 

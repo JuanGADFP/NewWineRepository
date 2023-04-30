@@ -4,6 +4,7 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
+        <option value="$PROJECT_DIR$/springboot-test-wines/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-test-wines/springboot-test-wines/pom.xml" />
       </list>
     </option>

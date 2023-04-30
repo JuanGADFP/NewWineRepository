@@ -1,41 +1,30 @@
 package org.juang.test.springboot.app.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.*;
-
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import java.util.List;
 
 @Entity
 @Table(name = "wines")
-@JsonIgnoreProperties("hibernateLazyInitializer")
-public class Wine implements Serializable {
-
-    private static final long serialVersionUID = -7237338699721505584L;
-
+public class Wine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String winery;
     private int año;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "wine_owners",
-            joinColumns = @JoinColumn(name = "wine_id"),
-            inverseJoinColumns = @JoinColumn(name = "owner_id"))
     private List<Owner> owners;
 
     // Constructor
     public Wine() {}
 
-    public Wine(String name, String winery, int año, List<Owner> owners) {
+    public Wine(Long id,String name, String winery, int año) {
+        this.id = id;
         this.name = name;
         this.winery = winery;
         this.año = año;
-        this.owners = owners;
     }
 
     // Getters and setters
@@ -71,11 +60,12 @@ public class Wine implements Serializable {
         this.año = año;
     }
 
-    public List<Owner> getOwners() {
-        return owners;
-    }
 
     public void setOwners(List<Owner> owners) {
         this.owners = owners;
+    }
+
+    public List<Owner> getOwners() {
+        return owners;
     }
 }

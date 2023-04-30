@@ -1,37 +1,21 @@
 package org.juang.test.springboot.app.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.*;
-import java.io.Serializable;
 import java.util.*;
 
+public class WineDTO {
 
-@Entity
-@Table(name = "wines")
-@JsonIgnoreProperties("hibernateLazyInitializer")
-public class Wine implements Serializable {
-
-    private static final long serialVersionUID = -7237338699721505584L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String winery;
     private int año;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "wine_owners",
-            joinColumns = @JoinColumn(name = "wine_id"),
-            inverseJoinColumns = @JoinColumn(name = "owner_id"))
     private List<Owner> owners;
 
-    // Constructor
-    public Wine() {}
+    // Constructors
+    public WineDTO() {}
 
-    public Wine(String name, String winery, int año, List<Owner> owners) {
+    public WineDTO(Long id, String name, String winery, int año, List<Owner> owners) {
+        this.id = id;
         this.name = name;
         this.winery = winery;
         this.año = año;
@@ -77,5 +61,17 @@ public class Wine implements Serializable {
 
     public void setOwners(List<Owner> owners) {
         this.owners = owners;
+    }
+
+    // toString method
+    @Override
+    public String toString() {
+        return "WineDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", winery='" + winery + '\'' +
+                ", año=" + año +
+                ", owners=" + owners +
+                '}';
     }
 }
