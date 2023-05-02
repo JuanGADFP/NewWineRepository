@@ -10,9 +10,7 @@ import java.util.*;
 @Entity
 @Table(name = "wines")
 @JsonIgnoreProperties("hibernateLazyInitializer")
-public class Wine implements Serializable {
-
-    private static final long serialVersionUID = -7237338699721505584L;
+public class Wine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

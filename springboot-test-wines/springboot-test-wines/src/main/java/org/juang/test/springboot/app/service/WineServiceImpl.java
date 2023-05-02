@@ -1,12 +1,10 @@
 package org.juang.test.springboot.app.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.juang.test.springboot.app.models.Owner;
 import org.juang.test.springboot.app.models.Wine;
 import org.juang.test.springboot.app.repository.WineRepository;
 import org.juang.test.springboot.app.response.WineResponseRest;
@@ -28,7 +26,7 @@ public class WineServiceImpl implements WineService {
     }
 
     public ResponseEntity<List<Wine>> getAllWines() {
-        List<Wine> wines = wineRepository.findAllWithOwners();
+        List<Wine> wines = wineRepository.findAll();
         return new ResponseEntity<>(wines, HttpStatus.OK);
     }
 
@@ -62,53 +60,29 @@ public class WineServiceImpl implements WineService {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        if (wine.getAño() == 0) {
-            response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid year field");
+        if (wine.getAño() == 0 || wine.getAño() <= 1601 || wine.getAño() >=2023) {
+            response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid year field : field year must be present and greater than 1601 or the current year");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-
+        // Saving the Wine entity to the database
         try {
-
+            List<Wine> list = new ArrayList<>();
             Wine wineGuardado = wineRepository.save(wine);
 
+            // Creating the response with the saved Wine entity
             if (wineGuardado != null) {
-                List<Wine> wineList = new ArrayList<>();
-                wineList.add(wineGuardado);
-                response.getWineResponse().setWine(wineList);
+                list.add(wineGuardado);
+                response.getWineResponse().setWine(list);
                 response.setMetadata("Response Status OK", "200", "Successfully saved wine in database");
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
-                response.setMetadata("Response Status INTERNAL_SERVER_ERROR", "500", "Could not save wine in database");
-                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         } catch (Exception e) {
+            e.getStackTrace();
             response.setMetadata("Response Status INTERNAL_SERVER_ERROR", "500", "INTERNAL_SERVER_ERROR");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        /*
-        WineResponseRest response = new WineResponseRest();
 
-        List<Wine> list = new ArrayList<>();
-
-        try{
-            Wine wineGuardado = wineRepository.save(wine);
-
-            if (wine.getName() != null || wine.getWinery() != null || wine.getAño() != 0 || wine.getId() != null){
-                list.add(wineGuardado);
-                response.getWineResponse().setWine(list);
-            }else {
-                response.setMetadata("Response Status BAD_REQUEST","400" , "Could not save wine in database");
-                return new ResponseEntity<WineResponseRest>(response, HttpStatus.BAD_REQUEST);
-            }
-        }catch (Exception e){
-            response.setMetadata("Response Status INTERNAL_SERVER_ERROR","500" , "INTERNAL_SERVER_ERROR");
-            return new ResponseEntity<WineResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        response.setMetadata("Response Status Ok", "200", "Successfully Response");
-        return new ResponseEntity<WineResponseRest>(response, HttpStatus.OK);
-
-         */
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override

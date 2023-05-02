@@ -1,15 +1,13 @@
 package org.juang.test.springboot.app.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.List;
+
 
 @Entity
 @Table(name = "owners")
-public class Owner implements Serializable {
-    private static final long serialVersionUID = -2418487707261983868L;
+public class Owner {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +17,8 @@ public class Owner implements Serializable {
     // Constructor
     public Owner() {}
 
-    public Owner(String name, String apellido) {
+    public Owner(String name, String apellido,Long id) {
+        this.id = id;
         this.name = name;
         this.apellido = apellido;
     }

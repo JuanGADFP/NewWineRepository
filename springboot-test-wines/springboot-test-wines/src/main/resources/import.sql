@@ -1,7 +1,7 @@
 INSERT INTO wines (name, winery,año) VALUES ('Espumante, CASA BOHER', 'CASA BOHER',2015);
 
-INSERT INTO owners (name, apellido) VALUES ('Juan', 'Perez');
-INSERT INTO owners (name, apellido) VALUES ('Maria', 'Garcia');
+INSERT INTO owners (name, apellido) VALUES ('Juan', 'Grattone');
+INSERT INTO owners (name, apellido) VALUES ('Agustin', 'Acosta');
 
 
 INSERT INTO wine_owners (wine_id, owner_id) VALUES (1, 1);
