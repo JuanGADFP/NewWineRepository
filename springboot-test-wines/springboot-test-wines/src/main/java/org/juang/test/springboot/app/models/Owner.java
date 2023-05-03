@@ -2,6 +2,7 @@ package org.juang.test.springboot.app.models;
 
 
 import javax.persistence.*;
+import java.util.*;
 
 
 @Entity
@@ -13,6 +14,11 @@ public class Owner {
     private Long id;
     private String name;
     private String apellido;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wine_id") // utiliza "wineID" en lugar de "wine_id"
+    private Wine wine;
+
 
     // Constructor
     public Owner() {}
@@ -46,6 +52,11 @@ public class Owner {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
+    }
+
+
+    public void setWine(Wine wine) {
+        this.wine = wine;
     }
 }
 

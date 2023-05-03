@@ -9,7 +9,6 @@ import java.util.*;
 
 @Entity
 @Table(name = "wines")
-@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Wine {
 
     @Id
@@ -19,24 +18,22 @@ public class Wine {
     private String winery;
     private int año;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "wine_owners",
-            joinColumns = @JoinColumn(name = "wine_id"),
-            inverseJoinColumns = @JoinColumn(name = "owner_id"))
-    private List<Owner> owners;
+    @OneToMany(mappedBy = "wine")
+    private List<Owner> owners ;
 
     // Constructor
-    public Wine() {}
 
-    public Wine(String name, String winery, int año, List<Owner> owners) {
+    public Wine() {
+    }
+
+    public Wine(Long id, String name, String winery, int año, List<Owner> owners) {
+        this.id = id;
         this.name = name;
         this.winery = winery;
         this.año = año;
         this.owners = owners;
     }
 
-    // Getters and setters
     public Long getId() {
         return id;
     }
