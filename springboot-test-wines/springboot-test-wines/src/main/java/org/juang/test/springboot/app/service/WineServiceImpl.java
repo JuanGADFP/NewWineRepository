@@ -66,11 +66,15 @@ public class WineServiceImpl implements WineService {
 
 
         if (wine.getAño() == 0 || wine.getAño() <= 1601 || wine.getAño() >=2023) {
-            response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid year field : field year must be present and greater than 1601 or the current year");
+            response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid year field : year field has to be present and greater than year 1601 but less than current year");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
         List<Owner> owners = wine.getOwners();
+        if (owners == null) {
+            response.setMetadata("Response Status BAD_REQUEST", "400", "All Wines must have a owner");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
         for (Owner owner : owners) {
             if (owner.getName() == null || owner.getName().isEmpty()) {
                 response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid name field in Owner");
@@ -80,10 +84,12 @@ public class WineServiceImpl implements WineService {
                 response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid apellido field in Owner");
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
+            /*
             if (owner.getId() != null) {
                 response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid ID field in Owner");
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
+             */
         }
         // Saving the Wine entity to the database
         try {
@@ -150,48 +156,58 @@ public class WineServiceImpl implements WineService {
         WineResponseRest response = new WineResponseRest();
         List<Wine> list = new ArrayList<>();
         try {
+
             Optional<Wine> wineBuscado = wineRepository.findById(id);
 
             if (wineBuscado.isPresent()) {
+
+                if (wineRequest.getName() == null) {
+                    response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid name field");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+                if (wineRequest.getWinery() == null) {
+                    response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid winery field");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+                if (wineRequest.getAño() == 0 || wineRequest.getAño() <= 1601 || wineRequest.getAño() >=2023) {
+                    response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid year field : field year must be present and greater than 1601 and less than the current year");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+                if (wineRequest.getId() != null) {
+                    response.setMetadata("Response Status BAD_REQUEST", "400", "ID field should not be sent");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+
                 Wine wine = wineBuscado.get();
-                // Validar campos requeridos de wineRequest
-                if (wineRequest.getName() != null) {
-                    wine.setName(wineRequest.getName());
+                wine.setName(wineRequest.getName());
+                wine.setWinery(wineRequest.getWinery());
+                wine.setAño(wineRequest.getAño());
+                // Actualizar la relación con los Owners
+                //List<Owner> owners = wine.getOwners();
+                List<Owner> ownersRequest = wineRequest.getOwners();
 
-                    if (wineRequest.getWinery() != null) {
-                        wine.setWinery(wineRequest.getWinery());
-                    }
-                    if (wineRequest.getAño() != 0) {
-                        wine.setAño(wineRequest.getAño());
-                    }
+                    /* Crear mapa para asociar los ids de los Owners con los objetos Owner
+                Map<Long, Owner> ownerMap = new HashMap<>();
+                for (Owner owner : owners) {
+                    ownerMap.put(owner.getId(), owner);
+                }
+              */
 
-                    // Actualizar la relación con los Owners
-                    List<Owner> owners = wine.getOwners();
-                    List<Owner> ownersRequest = wineRequest.getOwners();
 
-                    // Crear mapa para asociar los ids de los Owners con los objetos Owner
-                    Map<Long, Owner> ownerMap = new HashMap<>();
-                    for (Owner owner : owners) {
-                        ownerMap.put(owner.getId(), owner);
-                    }
-
-                    for (Owner owner : ownersRequest) {
-                        // Validar que el id del Owner existe en la base de datos
-                        Optional<Owner> ownerOptional = ownerRepository.findById(owner.getId());
-                        if (ownerOptional.isPresent()) {
-                            // Actualizar los campos de Owner si se enviaron en la solicitud
-                            if (owner.getName() != null) {
-                                owner.setName(owner.getName());
-                            }
-                            if (owner.getApellido() != null) {
-                                owner.setApellido(owner.getApellido());
-                            }
-                            // Actualizar la relación con Wine
-                            owner.setWine(wine);
-                            ownerRepository.save(owner);
+                for (Owner owner : ownersRequest) {
+                        if (owner.getName() == null || owner.getName().isEmpty()) {
+                            response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid name field in Owner");
+                            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
                         }
-                    }
-
+                        if (owner.getApellido() == null || owner.getApellido().isEmpty()) {
+                            response.setMetadata("Response Status BAD_REQUEST", "400", "Invalid apellido field in Owner");
+                            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                        }
+                        owner.setName(owner.getName());
+                        owner.setApellido(owner.getApellido());
+                        owner.setWine(wine);
+                    ownerRepository.save(owner);
+                }
                     wineRepository.save(wine);
                     list.add(wine);
                     response.getWineResponse().setWine(list);
@@ -200,7 +216,6 @@ public class WineServiceImpl implements WineService {
                     response.setMetadata("Response Status NOT_FOUND", "404", "Could not update wine id");
                     return new ResponseEntity<WineResponseRest>(response, HttpStatus.NOT_FOUND);
                 }
-            }
         } catch(Exception e){
             e.getStackTrace();
             response.setMetadata("Response Status INTERNAL_SERVER_ERROR", "500", "INTERNAL_SERVER_ERROR");
