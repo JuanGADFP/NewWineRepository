@@ -109,13 +109,11 @@ public class WineServiceImpl implements WineService {
                     ownerRepository.save(owner); // Guardamos el objeto Owner en la base de datos
                 }
             }
-
         } catch (Exception e) {
             e.getStackTrace();
             response.setMetadata("Response Status INTERNAL_SERVER_ERROR", "500", "INTERNAL_SERVER_ERROR");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @Override
@@ -192,7 +190,6 @@ public class WineServiceImpl implements WineService {
                     ownerMap.put(owner.getId(), owner);
                 }
               */
-
 
                 for (Owner owner : ownersRequest) {
                         if (owner.getName() == null || owner.getName().isEmpty()) {
